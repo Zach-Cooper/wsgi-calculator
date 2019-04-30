@@ -44,7 +44,7 @@ import traceback
 import pprint
 
 
-def home_page():
+def index():
     """
       Explains how to use the Calculator
     """
@@ -54,24 +54,24 @@ def home_page():
     </head>
     <body>
 
-    <p>The WSGI Calculator can do the following math operations:</p><br>
-    <ul>
-        <li>Addition</li>
-        <li>Subraction</li>
-        <li>Division</li>
-        <li>Multiplication</li>
-    </ul>
+        <h1>Welcome to Zach Cooper WSGI Calculator</h1>
+        <h3>The WSGI Calculator can do the following math operations:</h3>
+        <ul>
+            <li>Addition</li>
+            <li>Subraction</li>
+            <li>Division</li>
+            <li>Multiplication</li>
+        </ul>
 
-    <p>The following are some examples:</p><br>
-    <ul>
-        <li><a href='multiply/3/5'>/multiply/3/5</a></li>
-        <li><a href='/add/23/42'>/add/23/42</a></li>
-        <li><a href='subtract/23/42'>/subtract/23/42</a></li>
-        <li><a href='/divide/22/11'>/divide/22/11</a></li>
-    </ul>
+        <p>The following are some examples:</p>
+        <ul>
+            <li><a href='multiply/3/5'>/multiply/3/5</a></li>
+            <li><a href='/add/23/42'>/add/23/42</a></li>
+            <li><a href='subtract/23/42'>/subtract/23/42</a></li>
+            <li><a href='/divide/22/11'>/divide/22/11</a></li>
+        </ul>
 
-    <p>It even gives you an Error for dividing by Zero!!!
-       'divide/9/0'  => Ruh Roh...Divding by zero is not allowed!!</p>
+        <p>Thanks for visiting!!!</p>
 
     </body>
     </html>"""
@@ -79,51 +79,61 @@ def home_page():
     return usage_page
 
 
-def add(a, b):
+# def add(a, b):
+def add(*args):
     """ Returns a STRING with the sum of the arguments """
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
-    add = str(int(a), int(b))
+    # add = str(int(a), int(b))
+    res_add = sum(map(int, args))
     # sum = "0"
+    return str(res_add)
 
-    return add
+    # return add
 
 
-def subtract(a, b):
+# def subtract(a, b):
+def subtract(*args):
     """ Returns a STRING with the diference of the arguments """
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
-    subtract = str(int(a) - int(b))
+    # subtract = str(int(a) - int(b))
+    res_subtract = int(args[0]) - int(args[1])
     # sum = "0"
 
-    return subtract
+    # return subtract
+    return str(res_subtract)
 
 
-def divide(a, b):
+# def divide(a, b):
+def divide(*args):
     """ Returns a STRING with the dividend of the arguments """
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
-    divide = str(int(a) / int(b))
+    # divide = str(int(a) / int(b))
+    res_divide = int(args[0]) / int(args[1])
     # sum = "0"
 
-    if b == '0':
+    if args == '0':
         raise ZeroDivisionError
 
-    return divide
+    return str(res_divide)
 
 
-def multiply(a, b):
+# def multiply(a, b):
+def multiply(*args):
     """ Returns a STRING with the factor of the arguments """
 
     # TODO: Fill sum with the correct value, based on the
     # args provided.
-    multiply = str(int(a) * int(b))
+    # multiply = str(int(a) * int(b))
+    res_multiply = int(args[0]) * int(args[1])
     # sum = "0"
 
-    return multiply
+    return str(res_multiply)
 # TODO: Add functions for handling more arithmetic operations.
 
 
@@ -133,7 +143,7 @@ def resolve_path(path):
     arguments.
     """
     funcs = {
-        '': home_page,
+        '': index,
         'add': add,
         'subtract': subtract,
         'divide': divide,
@@ -146,8 +156,8 @@ def resolve_path(path):
     # determine the actual values of func and args using the
     # path.
 
-    args = path[1:]
     func_name = path[0]
+    args = path[1:]
 
     try:
         func = funcs[func_name]
@@ -184,9 +194,9 @@ def application(environ, start_response):
         body = "<h1>Internal Server Error</h1>"
         print(traceback.format_exc())
 
-    except ZeroDivisionError:
-        status = "400 Bad Request"
-        body = "<h1>Ruh Roh...Divding by zero is not allowed!!"
+    except ValueError:
+        status = "500 Internal Server Error"
+        body = "<h1>Numbers are the only thing allowed</h1>"
 
     finally:
         headers.append(('Content-length', str(len(body))))
@@ -194,9 +204,6 @@ def application(environ, start_response):
         return [body.encode('utf8')]
 
 
-
-
-    #
     # TODO (bonus): Add error handling for a user attempting
     # to divide by zero.
 
